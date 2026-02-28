@@ -1,0 +1,79 @@
+<!--
+Program name: thankyou.html
+Author: [Your Name as it appears in the UH roster]
+Date created: 02/26/2026
+Date last edited: 02/26/2026
+Version: 1.0
+Description: Confirmation page shown after patient registration form submission.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peak Point Medical – Submission Received</title>
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="banner">
+  <div id="logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="50" height="50">
+      <circle cx="30" cy="30" r="28" fill="#ffffff" stroke="#0e5a6e" stroke-width="2"/>
+      <rect x="24" y="12" width="12" height="36" rx="3" fill="#e05c00"/>
+      <rect x="12" y="24" width="36" height="12" rx="3" fill="#e05c00"/>
+    </svg>
+  </div>
+  <div id="banner-title">Peak Point Medical</div>
+  <div id="banner-date">
+    Date:
+    <script>
+      (function(){
+        var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        var months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+        var d=new Date();
+        var s="th";
+        if(d.getDate()===1||d.getDate()===21||d.getDate()===31)s="st";
+        else if(d.getDate()===2||d.getDate()===22)s="nd";
+        else if(d.getDate()===3||d.getDate()===23)s="rd";
+        document.write(days[d.getDay()]+", "+months[d.getMonth()]+" "+d.getDate()+s+", "+d.getFullYear());
+      })();
+    </script>
+  </div>
+</div>
+
+<div id="main-content">
+  <div class="section-bar">Submission Confirmed</div>
+  <div class="form-section" style="text-align:center; padding:50px 20px;">
+    <h2 style="margin-bottom:12px;">Thank you for your submission!</h2>
+    <p style="color:#555;">Your patient registration has been received.<br>
+    A member of our staff will contact you shortly.</p>
+    <p style="margin-top:24px;">
+      <a href="patient-form.html" style="color:#0e5a6e; font-weight:bold; text-decoration:underline;">
+        &larr; Return to Registration Form
+      </a>
+    </p>
+  </div>
+</div>
+
+<div id="footer">
+  <div id="footer-brand">
+    <strong>Peak Point Medical</strong><br>
+    PO Box 19134 &nbsp;|&nbsp; Pearland, TX 77584
+  </div>
+  <div id="footer-center">
+    <button type="button" id="btn-contact"
+            onclick="window.location='mailto:info@peakpointmedical.example.com'">
+      Contact Us
+    </button>
+  </div>
+  <div id="footer-social">
+    <a href="https://facebook.com" target="_blank" rel="noopener">Facebook</a> &nbsp;|&nbsp;
+    <a href="https://twitter.com"  target="_blank" rel="noopener">Twitter/X</a> &nbsp;|&nbsp;
+    <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+</div>
+
+<!-- END OF FILE: thankyou.html -->
+</body>
+</html>
