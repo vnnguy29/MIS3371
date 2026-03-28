@@ -1,3 +1,12 @@
+/*
+  Program name: style.css
+  Author: Viet Nguyen
+  Date created: 02/26/2026
+  Date last edited: 02/26/2026
+  Version: 1.0
+  Description: External stylesheet for We'R'Docs Medical patient registration site.
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@300;400;700&family=Lora:wght@600&display=swap');
 
 :root {
