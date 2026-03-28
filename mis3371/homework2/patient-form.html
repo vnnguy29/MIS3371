@@ -1,3 +1,12 @@
+<!--
+Program name: patient-form.html
+Author: Viet Nguyen
+Date created: 02/26/2026
+Date last edited: 03/27/2026
+Version: 2.0
+Description: This is my patient registration form for Peak Point Medical.
+             It collects patient info, medical history, and account credentials.
+             Added review button, validation, and external JS file for HW2.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -5,13 +14,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Peak Point Medical – Patient Registration</title>
+  <!-- link to external css file -->
   <link href="style.css" rel="stylesheet">
 </head>
 <body>
 
-<!-- ============================================================
-     HEADER / BANNER
-============================================================ -->
+<!-- header banner with logo and dynamic date -->
 <div id="banner">
   <div id="logo">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="50" height="50">
@@ -23,6 +31,7 @@
   <div id="banner-title">Peak Point Medical</div>
   <div id="banner-date">
     Date:
+    <!-- inline javascript to show todays date dynamically -->
     <script>
       (function(){
         var days   = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -39,18 +48,18 @@
   </div>
 </div>
 
-<!-- ============================================================
-     MAIN CONTENT
-============================================================ -->
+<!-- main content area -->
 <div id="main-content">
 
+  <!-- form does not submit normally, handled by javascript -->
   <form id="registration-form" onsubmit="return false;">
 
-    <!-- PERSONAL INFORMATION -->
+    <!-- section 1: personal info -->
     <div class="section-bar">Patient Registration Form</div>
     <div class="form-section">
       <table class="form-table">
 
+        <!-- first name, middle initial, last name on same row -->
         <tr>
           <td class="lbl">First Name: <span class="req">*</span></td>
           <td>
@@ -80,6 +89,7 @@
           </td>
         </tr>
 
+        <!-- date of birth - min/max set by javascript on page load -->
         <tr>
           <td class="lbl">Date of Birth: <span class="req">*</span></td>
           <td colspan="5">
@@ -90,6 +100,7 @@
           </td>
         </tr>
 
+        <!-- ssn uses password type so it is hidden -->
         <tr>
           <td class="lbl">Social Security: <span class="req">*</span></td>
           <td colspan="5">
@@ -103,6 +114,7 @@
           </td>
         </tr>
 
+        <!-- phone is optional, email is required -->
         <tr>
           <td class="lbl">Phone Number:</td>
           <td>
@@ -124,6 +136,7 @@
           </td>
         </tr>
 
+        <!-- address fields -->
         <tr>
           <td class="lbl">Address Line 1: <span class="req">*</span></td>
           <td colspan="5">
@@ -136,6 +149,7 @@
           </td>
         </tr>
 
+        <!-- address line 2 is optional -->
         <tr>
           <td class="lbl">Address Line 2:</td>
           <td colspan="5">
@@ -147,6 +161,7 @@
           </td>
         </tr>
 
+        <!-- city, state dropdown, zip all on same row -->
         <tr>
           <td class="lbl">City: <span class="req">*</span></td>
           <td>
@@ -159,6 +174,7 @@
           </td>
           <td class="lbl">State: <span class="req">*</span></td>
           <td>
+            <!-- dropdown with all 50 states plus DC and PR -->
             <select id="state" name="state" required
                     title="Select your state or territory.">
               <option value="">--</option>
@@ -190,6 +206,7 @@
           </td>
         </tr>
 
+        <!-- gender radio buttons -->
         <tr>
           <td class="lbl">Gender: <span class="req">*</span></td>
           <td colspan="5">
@@ -203,11 +220,12 @@
       </table>
     </div>
 
-    <!-- MEDICAL HISTORY -->
+    <!-- section 2: medical history -->
     <div class="section-bar">Medical History</div>
     <div class="form-section">
       <table class="form-table">
 
+        <!-- checkboxes for prior illnesses - at least 5 required by assignment -->
         <tr>
           <td class="lbl">Check all that apply:</td>
           <td colspan="5">
@@ -220,6 +238,7 @@
           </td>
         </tr>
 
+        <!-- radio buttons for vaccinated -->
         <tr>
           <td class="lbl">Have you been vaccinated? <span class="req">*</span></td>
           <td colspan="5">
@@ -230,6 +249,7 @@
           </td>
         </tr>
 
+        <!-- radio buttons for insurance -->
         <tr>
           <td class="lbl">Do you have insurance? <span class="req">*</span></td>
           <td colspan="5">
@@ -239,6 +259,7 @@
           </td>
         </tr>
 
+        <!-- slider - calls updateSlider() in script.js to show value dynamically -->
         <tr>
           <td class="lbl">Rate your pain level: <span class="req">*</span></td>
           <td colspan="5">
@@ -253,6 +274,7 @@
           </td>
         </tr>
 
+        <!-- textarea for symptoms - optional but no double quotes allowed -->
         <tr>
           <td class="lbl" style="vertical-align:top; padding-top:6px;">Describe current symptoms:</td>
           <td colspan="5">
@@ -267,11 +289,12 @@
       </table>
     </div>
 
-    <!-- CREATE ACCOUNT -->
+    <!-- section 3: create account -->
     <div class="section-bar">Create Account</div>
     <div class="form-section">
       <table class="form-table">
 
+        <!-- user id - lowercaseUserID() in script.js converts to lowercase as user types -->
         <tr>
           <td class="lbl">User ID: <span class="req">*</span></td>
           <td colspan="5">
@@ -286,6 +309,7 @@
           </td>
         </tr>
 
+        <!-- password - checkPasswordStrength() shows weak/fair/good/strong as user types -->
         <tr>
           <td class="lbl">Password: <span class="req">*</span></td>
           <td colspan="5">
@@ -299,6 +323,7 @@
           </td>
         </tr>
 
+        <!-- confirm password - checkPasswordMatch() checks if both passwords match -->
         <tr>
           <td class="lbl">Confirm Password: <span class="req">*</span></td>
           <td colspan="5">
@@ -314,7 +339,7 @@
       </table>
     </div>
 
-    <!-- BUTTONS -->
+    <!-- 3 buttons: clear resets form, review shows summary, submit goes to thankyou page -->
     <div id="form-buttons">
       <input type="reset"  id="btn-clear"  value="Clear Form" onclick="clearReview();">
       <input type="button" id="btn-review" value="Review"     onclick="reviewForm();">
@@ -323,7 +348,7 @@
 
   </form>
 
-  <!-- REVIEW PANEL -->
+  <!-- review panel is hidden until user clicks Review button -->
   <div id="review-panel" style="display:none;">
     <div class="section-bar">&#10003; Please Review Your Information</div>
     <div class="form-section">
@@ -332,9 +357,9 @@
     </div>
   </div>
 
-</div>
+</div><!-- end main content -->
 
-<!-- FOOTER -->
+<!-- footer with contact button and social links -->
 <div id="footer">
   <div id="footer-brand">
     <strong>Peak Point Medical</strong><br>
@@ -353,20 +378,9 @@
   </div>
 </div>
 
+<!-- link to external javascript file -->
 <script src="script.js"></script>
 
 <!-- END OF FILE: patient-form.html -->
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
