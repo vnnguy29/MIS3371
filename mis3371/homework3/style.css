@@ -1,0 +1,244 @@
+/*
+  Program name: style.css
+  Author: Viet Nguyen
+  Date created: 03/27/2026
+  Date last edited: 03/27/2026
+  Version: 3.0
+  Description: External css file for Peak Point Medical HW3.
+               Same styling as HW2 with pre-defined error message space
+               so the form does not jump around when errors appear.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@300;400;700&family=Lora:wght@600&display=swap');
+
+:root {
+  --teal:    #0e5a6e;
+  --orange:  #e07000;
+  --bg:      #f2f6f8;
+  --white:   #ffffff;
+  --text:    #1a1a1a;
+  --muted:   #555555;
+  --border:  #b0c8d4;
+  --red:     #c0392b;
+  --green:   #27ae60;
+  --font-heading: 'Lora', Georgia, serif;
+  --font-body:    'Merriweather Sans', Verdana, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+h1 { font-family: var(--font-heading); color: var(--white); font-size: 1.6rem; }
+h2 { font-family: var(--font-heading); color: var(--teal); }
+
+a         { color: var(--white); text-decoration: none; }
+a:visited { color: #cce4ee; }
+a:hover   { text-decoration: underline; }
+
+table { border-collapse: collapse; width: 100%; }
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+input[type="date"],
+select,
+textarea {
+  font-family: var(--font-body);
+  font-size: 13px;
+  border: 1px solid #888;
+  padding: 3px 5px;
+  border-radius: 2px;
+  background: var(--white);
+  color: var(--text);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--teal);
+  border-color: var(--teal);
+}
+
+input[type="range"] { accent-color: var(--orange); vertical-align: middle; width: 200px; }
+textarea { resize: vertical; }
+
+#banner {
+  background-color: var(--teal);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 14px;
+}
+
+#logo { flex-shrink: 0; }
+
+#banner-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--white);
+  flex: 1;
+}
+
+#banner-date {
+  font-size: 0.85rem;
+  color: var(--white);
+  text-align: right;
+}
+
+#main-content {
+  max-width: 920px;
+  margin: 20px auto;
+  background: var(--white);
+  border: 1px solid var(--border);
+}
+
+#form-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 18px 0 22px;
+}
+
+#btn-clear {
+  background-color: #888;
+  color: var(--white);
+  border: none;
+  font-weight: bold;
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+#btn-clear:hover { background-color: #666; }
+
+#btn-review {
+  background-color: var(--teal);
+  color: var(--white);
+  border: none;
+  font-weight: bold;
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+#btn-review:hover { background-color: #1a7a94; }
+
+#btn-validate {
+  background-color: var(--orange);
+  color: var(--white);
+  border: none;
+  font-weight: bold;
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+#btn-validate:hover { background-color: #b85a00; }
+
+#btn-submit {
+  background-color: var(--green);
+  color: var(--white);
+  border: none;
+  font-weight: bold;
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+#btn-submit:hover { background-color: #1e8449; }
+
+#review-panel { border-top: 3px solid var(--teal); margin-top: 10px; }
+
+#footer {
+  background-color: var(--teal);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#footer-brand  { line-height: 1.8; }
+#footer-center { text-align: center; }
+#footer-social { text-align: right; }
+
+#btn-contact {
+  background: var(--white);
+  color: var(--teal);
+  border: 1px solid var(--white);
+  font-weight: bold;
+  padding: 6px 18px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+#btn-contact:hover { background: var(--orange); color: var(--white); }
+
+.section-bar {
+  background-color: var(--orange);
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 7px 0;
+}
+
+.form-section {
+  background: var(--white);
+  padding: 14px 20px;
+  border-bottom: 1px solid #dde8ee;
+}
+
+.form-table tr            { border-bottom: 1px solid #eef2f4; }
+.form-table tr:last-child { border-bottom: none; }
+.form-table td            { padding: 7px 8px; vertical-align: middle; }
+
+.lbl {
+  font-weight: bold;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  padding-right: 6px;
+  width: 180px;
+}
+
+.req { color: var(--red); font-weight: bold; }
+
+/* pre-defined height so form does not jump when errors show */
+.err {
+  display: block;
+  color: var(--red);
+  font-size: 0.78rem;
+  font-style: italic;
+  min-height: 1em;
+  margin-top: 2px;
+}
+
+.hint { font-size: 0.78rem; color: var(--muted); margin-left: 6px; }
+
+.radio-lbl       { display: inline-block; margin-right: 14px; font-size: 0.88rem; cursor: pointer; }
+.radio-lbl input { margin-right: 4px; accent-color: var(--teal); }
+
+.chk-lbl         { display: inline-block; margin-right: 12px; margin-bottom: 3px; font-size: 0.88rem; cursor: pointer; }
+.chk-lbl input   { margin-right: 4px; accent-color: var(--teal); }
+
+.slider-lbl   { font-size: 0.8rem; color: var(--muted); margin: 0 4px; }
+.slider-value { font-weight: bold; font-size: 0.9rem; margin-left: 8px; color: var(--green); }
+
+#footer-social a         { color: #cce8f0; }
+#footer-social a:visited { color: #aaccdd; }
+#footer-social a:hover   { color: var(--white); text-decoration: underline; }
+
+.rev-header td  { background: var(--teal); color: var(--white); font-weight: bold; padding: 10px !important; text-align: center; }
+.rev-col-hdr td { background: #dde8ee; font-weight: bold; font-size: 0.85rem; padding: 6px 10px !important; }
+.rev-section td { background: #fff3e0; color: #b85a00; font-size: 0.85rem; padding: 5px 10px !important; }
+.rev-lbl        { font-weight: bold; font-size: 0.85rem; width: 200px; color: var(--teal); padding: 7px 10px !important; }
+.rev-pass       { color: var(--green); font-weight: bold; font-size: 0.85rem; padding: 7px 10px !important; }
+.rev-fail       { color: var(--red); font-weight: bold; font-size: 0.85rem; padding: 7px 10px !important; }
+
+/* END OF FILE: style.css */
