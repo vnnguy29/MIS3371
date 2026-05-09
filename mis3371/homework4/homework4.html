@@ -3,12 +3,14 @@ Program name: homework4.html
 Author: Viet Nguyen
 Date created: 04/01/2026
 Date last edited: 05/08/2026
-Version: 4.1
+Version: 4.3
 Description: Patient registration form for Peak Point Medical.
-             HW4 added Fetch API to load the state dropdown from an
+             HW4 adds Fetch API to load the state dropdown from an
              external file, an iFrame in the body, a fixed header
-             and footer, cookies remembering returning users, and
+             and footer, cookies to remember returning users, and
              local storage to save and restore form data.
+             Fixed SSN field to use text type with obscured styling
+             so auto format works properly.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -119,15 +121,17 @@ Description: Patient registration form for Peak Point Medical.
           </td>
         </tr>
 
-        <!-- ssn - obscured and NOT saved to local storage for security -->
+        <!-- ssn - uses text type with obscured styling so auto format works -->
+        <!-- color transparent hides the actual digits while still showing input -->
         <tr>
           <td class="lbl">Social Security: <span class="req">*</span></td>
           <td colspan="5">
-            <input type="password" id="ssn" name="ssn"
+            <input type="text" id="ssn" name="ssn"
                    maxlength="11" size="14"
                    pattern="\d{3}-\d{2}-\d{4}"
                    placeholder="XXX-XX-XXXX"
                    title="9-digit SSN. Dashes added automatically. Not saved locally for security."
+                   style="color:transparent; text-shadow: 0 0 8px rgba(0,0,0,0.8);"
                    oninput="formatSSN()"
                    onblur="validateSSN()"
                    required>
