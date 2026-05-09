@@ -3,16 +3,14 @@
   Author: Viet Nguyen
   Date created: 04/01/2026
   Date last edited: 05/08/2026
-  Version: 4.2
+  Version: 4.3
   Description: External javascript for Peak Point Medical HW4.
-               Fixed Fetch API to use URL for GitHub Pages.
-               Cookies remember returning users. Local storage saves
-               and restores all non-secure form fields.
-               All HW3 on the fly validation is still included.
+               Fixed bug where passwords match success message was
+               being counted as an error by checkSubmitButton.
+               Fixed Fetch API to use absolute URL for GitHub Pages.
 */
 
 // ── FETCH API ────────────────────────────────────────────────
-// loads state dropdown from states.html using absolute URL for GitHub Pages
 function loadStates() {
   fetch("https://vnnguy29.github.io/MIS3371/mis3371/homework4/states.html")
     .then(function(response) {
@@ -71,7 +69,6 @@ function deleteCookie(name) {
   document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
 }
 
-// checks for cookie and shows welcome message in banner
 function checkCookie() {
   var firstName = getCookie("ppm_firstname");
   var welcomeEl = document.getElementById("welcome-msg");
@@ -90,7 +87,6 @@ function checkCookie() {
   }
 }
 
-// handles not me checkbox - clears everything and resets as new user
 function handleNotMe() {
   var checked = document.getElementById("not-me").checked;
   if (checked) {
@@ -102,7 +98,6 @@ function handleNotMe() {
   }
 }
 
-// handles remember me checkbox
 function handleRememberMe() {
   var rememberMe = document.getElementById("remember-me").checked;
   if (!rememberMe) {
@@ -241,10 +236,13 @@ function checkPasswordStrength() {
 }
 
 // ── CHECK SUBMIT BUTTON ───────────────────────────────────────
+// only counts red error messages - ignores green success messages
 function checkSubmitButton() {
   var hasErrors = false;
   document.querySelectorAll(".err").forEach(function(e) {
-    if (e.textContent && e.textContent.trim() !== "" && e.textContent !== "\u00a0") {
+    var txt = e.textContent.trim();
+    // only count as error if it has text AND is not a success message
+    if (txt !== "" && txt !== "\u00a0" && e.style.color !== "rgb(39, 174, 96)" && e.style.color !== "#27ae60") {
       hasErrors = true;
     }
   });
@@ -256,8 +254,8 @@ function checkSubmitButton() {
 function validateFname() {
   var val = document.getElementById("fname").value.trim();
   var err = document.getElementById("err-fname");
-  if (!val) err.textContent = "First name is required.";
-  else if (!/^[A-Za-z'\-]{1,30}$/.test(val)) err.textContent = "Letters, apostrophes, and dashes only.";
+  if (!val) { err.textContent = "First name is required."; err.style.color = "#c0392b"; }
+  else if (!/^[A-Za-z'\-]{1,30}$/.test(val)) { err.textContent = "Letters, apostrophes, and dashes only."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -265,7 +263,7 @@ function validateFname() {
 function validateMI() {
   var val = document.getElementById("mi").value.trim();
   var err = document.getElementById("err-mi");
-  if (val && !/^[A-Za-z]$/.test(val)) err.textContent = "One letter only.";
+  if (val && !/^[A-Za-z]$/.test(val)) { err.textContent = "One letter only."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -273,8 +271,8 @@ function validateMI() {
 function validateLname() {
   var val = document.getElementById("lname").value.trim();
   var err = document.getElementById("err-lname");
-  if (!val) err.textContent = "Last name is required.";
-  else if (!/^[A-Za-z'\-]{1,30}$/.test(val)) err.textContent = "Letters, apostrophes, and dashes only.";
+  if (!val) { err.textContent = "Last name is required."; err.style.color = "#c0392b"; }
+  else if (!/^[A-Za-z'\-]{1,30}$/.test(val)) { err.textContent = "Letters, apostrophes, and dashes only."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -282,13 +280,13 @@ function validateLname() {
 function validateDOB() {
   var val = document.getElementById("dob").value;
   var err = document.getElementById("err-dob");
-  if (!val) { err.textContent = "Date of birth is required."; }
+  if (!val) { err.textContent = "Date of birth is required."; err.style.color = "#c0392b"; }
   else {
     var d       = new Date(val + "T00:00:00");
     var today   = new Date(); today.setHours(0,0,0,0);
     var minDate = new Date(); minDate.setFullYear(minDate.getFullYear()-120); minDate.setHours(0,0,0,0);
-    if (d > today) err.textContent = "Cannot be in the future.";
-    else if (d < minDate) err.textContent = "Cannot be more than 120 years ago.";
+    if (d > today) { err.textContent = "Cannot be in the future."; err.style.color = "#c0392b"; }
+    else if (d < minDate) { err.textContent = "Cannot be more than 120 years ago."; err.style.color = "#c0392b"; }
     else err.textContent = "\u00a0";
   }
   checkSubmitButton();
@@ -297,18 +295,17 @@ function validateDOB() {
 function validateSSN() {
   var val = document.getElementById("ssn").value.trim();
   var err = document.getElementById("err-ssn");
-  if (!val) err.textContent = "Social Security Number is required.";
-  else if (!/^\d{3}-\d{2}-\d{4}$/.test(val)) err.textContent = "Format: XXX-XX-XXXX";
+  if (!val) { err.textContent = "Social Security Number is required."; err.style.color = "#c0392b"; }
+  else if (!/^\d{3}-\d{2}-\d{4}$/.test(val)) { err.textContent = "Format: XXX-XX-XXXX"; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
 
-// accepts any 10 digit phone number regardless of formatting
 function validatePhone() {
   var val    = document.getElementById("phone").value.trim();
   var err    = document.getElementById("err-phone");
   var digits = val.replace(/\D/g, "");
-  if (val && digits.length !== 10) err.textContent = "Must be 10 digits. Example: 214-843-6669";
+  if (val && digits.length !== 10) { err.textContent = "Must be 10 digits."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -318,8 +315,8 @@ function validateEmail() {
   field.value = field.value.toLowerCase();
   var val = field.value.trim();
   var err = document.getElementById("err-email");
-  if (!val) err.textContent = "Email address is required.";
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) err.textContent = "Format: name@domain.tld";
+  if (!val) { err.textContent = "Email address is required."; err.style.color = "#c0392b"; }
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) { err.textContent = "Format: name@domain.tld"; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -327,8 +324,8 @@ function validateEmail() {
 function validateAddr1() {
   var val = document.getElementById("addr1").value.trim();
   var err = document.getElementById("err-addr1");
-  if (!val || val.length < 2) err.textContent = "Required. At least 2 characters.";
-  else if (val.length > 30) err.textContent = "Cannot exceed 30 characters.";
+  if (!val || val.length < 2) { err.textContent = "Required. At least 2 characters."; err.style.color = "#c0392b"; }
+  else if (val.length > 30) { err.textContent = "Cannot exceed 30 characters."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -336,7 +333,7 @@ function validateAddr1() {
 function validateAddr2() {
   var val = document.getElementById("addr2").value.trim();
   var err = document.getElementById("err-addr2");
-  if (val && val.length < 2) err.textContent = "If entered, must be at least 2 characters.";
+  if (val && val.length < 2) { err.textContent = "If entered, must be at least 2 characters."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -344,8 +341,8 @@ function validateAddr2() {
 function validateCity() {
   var val = document.getElementById("city").value.trim();
   var err = document.getElementById("err-city");
-  if (!val || val.length < 2) err.textContent = "Required. At least 2 characters.";
-  else if (val.length > 30) err.textContent = "Cannot exceed 30 characters.";
+  if (!val || val.length < 2) { err.textContent = "Required. At least 2 characters."; err.style.color = "#c0392b"; }
+  else if (val.length > 30) { err.textContent = "Cannot exceed 30 characters."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -353,7 +350,7 @@ function validateCity() {
 function validateState() {
   var val = document.getElementById("state").value;
   var err = document.getElementById("err-state");
-  if (!val) err.textContent = "Please select a state.";
+  if (!val) { err.textContent = "Please select a state."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -361,8 +358,8 @@ function validateState() {
 function validateZip() {
   var val = document.getElementById("zip").value.trim();
   var err = document.getElementById("err-zip");
-  if (!val) err.textContent = "ZIP code is required.";
-  else if (!/^\d{5}$/.test(val)) err.textContent = "Must be exactly 5 digits.";
+  if (!val) { err.textContent = "ZIP code is required."; err.style.color = "#c0392b"; }
+  else if (!/^\d{5}$/.test(val)) { err.textContent = "Must be exactly 5 digits."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -370,7 +367,7 @@ function validateZip() {
 function validateGender() {
   var val = document.querySelector('input[name="gender"]:checked');
   var err = document.getElementById("err-gender");
-  if (!val) err.textContent = "Please select a gender.";
+  if (!val) { err.textContent = "Please select a gender."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -378,7 +375,7 @@ function validateGender() {
 function validateVacc() {
   var val = document.querySelector('input[name="vaccinated"]:checked');
   var err = document.getElementById("err-vaccinated");
-  if (!val) err.textContent = "Please select one.";
+  if (!val) { err.textContent = "Please select one."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -386,7 +383,7 @@ function validateVacc() {
 function validateIns() {
   var val = document.querySelector('input[name="insurance"]:checked');
   var err = document.getElementById("err-insurance");
-  if (!val) err.textContent = "Please select one.";
+  if (!val) { err.textContent = "Please select one."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -394,7 +391,7 @@ function validateIns() {
 function validateSymptoms() {
   var val = document.getElementById("symptoms").value;
   var err = document.getElementById("err-symptoms");
-  if (val.indexOf('"') !== -1) err.textContent = "Do not use quotation marks.";
+  if (val.indexOf('"') !== -1) { err.textContent = "Do not use quotation marks."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -402,12 +399,12 @@ function validateSymptoms() {
 function validateUserID() {
   var val = document.getElementById("userid").value.trim();
   var err = document.getElementById("err-userid");
-  if (!val) err.textContent = "User ID is required.";
-  else if (/^\d/.test(val)) err.textContent = "Cannot start with a number.";
-  else if (val.length < 5) err.textContent = "Must be at least 5 characters.";
-  else if (val.length > 20) err.textContent = "Cannot be more than 20 characters.";
-  else if (/\s/.test(val)) err.textContent = "No spaces allowed.";
-  else if (!/^[a-z][a-z0-9_\-]{4,19}$/.test(val)) err.textContent = "Letters, numbers, underscore, and dash only.";
+  if (!val) { err.textContent = "User ID is required."; err.style.color = "#c0392b"; }
+  else if (/^\d/.test(val)) { err.textContent = "Cannot start with a number."; err.style.color = "#c0392b"; }
+  else if (val.length < 5) { err.textContent = "Must be at least 5 characters."; err.style.color = "#c0392b"; }
+  else if (val.length > 20) { err.textContent = "Cannot be more than 20 characters."; err.style.color = "#c0392b"; }
+  else if (/\s/.test(val)) { err.textContent = "No spaces allowed."; err.style.color = "#c0392b"; }
+  else if (!/^[a-z][a-z0-9_\-]{4,19}$/.test(val)) { err.textContent = "Letters, numbers, underscore, and dash only."; err.style.color = "#c0392b"; }
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
@@ -427,11 +424,13 @@ function validatePassword() {
   else if (/["']/.test(pw)) msg = "Cannot contain quotation marks.";
   else if (userid && pw.toLowerCase() === userid.toLowerCase()) msg = "Password cannot equal your User ID.";
   else if (userid && pw.toLowerCase().indexOf(userid.toLowerCase()) !== -1) msg = "Password cannot contain your User ID.";
-  err.textContent = msg || "\u00a0";
+  if (msg) { err.textContent = msg; err.style.color = "#c0392b"; }
+  else err.textContent = "\u00a0";
   if (document.getElementById("password2").value.length > 0) checkPasswordMatch();
   checkSubmitButton();
 }
 
+// fixed - success message no longer blocks the submit button
 function checkPasswordMatch() {
   var p1  = document.getElementById("password").value;
   var p2  = document.getElementById("password2").value;
@@ -441,8 +440,9 @@ function checkPasswordMatch() {
     err.textContent = "Passwords do not match.";
     err.style.color = "#c0392b";
   } else {
+    // clear the error span and show success in pw-strength style span instead
     err.textContent = "\u2713 Passwords match.";
-    err.style.color = "#27ae60";
+    err.style.color = "#27ae60"; // green - not counted as error by checkSubmitButton
   }
   checkSubmitButton();
 }
@@ -459,7 +459,8 @@ function validateAll() {
 
   var firstErr = null;
   document.querySelectorAll(".err").forEach(function(e) {
-    if (!firstErr && e.textContent && e.textContent.trim() !== "" && e.textContent !== "\u00a0") {
+    var txt = e.textContent.trim();
+    if (!firstErr && txt !== "" && txt !== "\u00a0" && e.style.color !== "rgb(39, 174, 96)" && e.style.color !== "#27ae60") {
       firstErr = e;
     }
   });
