@@ -3,19 +3,18 @@
   Author: Viet Nguyen
   Date created: 04/01/2026
   Date last edited: 05/08/2026
-  Version: 4.1
+  Version: 4.2
   Description: External javascript for Peak Point Medical HW4.
-               New things added: Fetch API loads state dropdown from
-               states.html, cookies remembering returning users, and local
-               storage saves and restores all non-secure form fields.
+               Fixed Fetch API to use URL for GitHub Pages.
+               Cookies remember returning users. Local storage saves
+               and restores all non-secure form fields.
                All HW3 on the fly validation is still included.
-               Fixed phone validation to accept any 10 digit format.
 */
 
 // ── FETCH API ────────────────────────────────────────────────
-// loads state dropdown options from the external states.html file
+// loads state dropdown from states.html using absolute URL for GitHub Pages
 function loadStates() {
-  fetch("states.html")
+  fetch("https://vnnguy29.github.io/MIS3371/mis3371/homework4/states.html")
     .then(function(response) {
       if (!response.ok) throw new Error("Could not load states.html");
       return response.text();
@@ -91,7 +90,7 @@ function checkCookie() {
   }
 }
 
-// handles not me checkbox
+// handles not me checkbox - clears everything and resets as new user
 function handleNotMe() {
   var checked = document.getElementById("not-me").checked;
   if (checked) {
@@ -304,7 +303,7 @@ function validateSSN() {
   checkSubmitButton();
 }
 
-// fixed phone validation - accepts any 10 digit number regardless of formatting
+// accepts any 10 digit phone number regardless of formatting
 function validatePhone() {
   var val    = document.getElementById("phone").value.trim();
   var err    = document.getElementById("err-phone");
@@ -512,18 +511,17 @@ function reviewForm() {
     else if (dd < mn) dobErr = "More than 120 years ago";
     else dobOk = true;
   }
-  var ssnOk   = /^\d{3}-\d{2}-\d{4}$/.test(ssn);
-  var ssnDisp = ssn ? "***-**-" + ssn.replace(/\D/g,"").slice(-4) : "(not entered)";
-  // fixed phone check - just count digits
+  var ssnOk      = /^\d{3}-\d{2}-\d{4}$/.test(ssn);
+  var ssnDisp    = ssn ? "***-**-" + ssn.replace(/\D/g,"").slice(-4) : "(not entered)";
   var phoneDigits = phone.replace(/\D/g,"");
-  var phoneOk = !phone || phoneDigits.length === 10;
-  var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  var addrOk  = addr1.length>=2 && city.length>=2 && state!=="" && /^\d{5}$/.test(zip);
-  var addrDisp= (addr1||"(missing)")+(addr2?", "+addr2:"")+"<br>"+(city||"(missing)")+", "+(state||"(missing)")+" "+(zip||"(missing)");
-  var pw2Ok   = pw === document.getElementById("password2").value;
-  var uidOk   = userid.length>=5 && userid.length<=20 && /^[a-z][a-z0-9_\-]{4,19}$/.test(userid);
-  var pwOk    = pw.length>=8 && /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw) &&
-                /[!@#%^&*()\-_+=\/><.,`~]/.test(pw) && !/["']/.test(pw) && pw.toLowerCase()!==userid.toLowerCase();
+  var phoneOk    = !phone || phoneDigits.length === 10;
+  var emailOk    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  var addrOk     = addr1.length>=2 && city.length>=2 && state!=="" && /^\d{5}$/.test(zip);
+  var addrDisp   = (addr1||"(missing)")+(addr2?", "+addr2:"")+"<br>"+(city||"(missing)")+", "+(state||"(missing)")+" "+(zip||"(missing)");
+  var pw2Ok      = pw === document.getElementById("password2").value;
+  var uidOk      = userid.length>=5 && userid.length<=20 && /^[a-z][a-z0-9_\-]{4,19}$/.test(userid);
+  var pwOk       = pw.length>=8 && /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw) &&
+                   /[!@#%^&*()\-_+=\/><.,`~]/.test(pw) && !/["']/.test(pw) && pw.toLowerCase()!==userid.toLowerCase();
 
   var h = "";
   h += '<tr class="rev-header"><td colspan="3" style="text-align:center;font-weight:bold;padding:10px;">PLEASE REVIEW THIS INFORMATION</td></tr>';
@@ -532,4 +530,66 @@ function reviewForm() {
   h += '<tr><td class="rev-lbl">Full Name</td><td>'+(fullName.trim()||"(blank)")+'</td>'+sc(nameOk&&!!fname&&!!lname,"Check name fields")+'</tr>';
   h += '<tr><td class="rev-lbl">Date of Birth</td><td>'+(dob||"(not entered)")+'</td>'+sc(dobOk,dobErr)+'</tr>';
   h += '<tr><td class="rev-lbl">Social Security</td><td>'+ssnDisp+'</td>'+sc(ssnOk,"Format: XXX-XX-XXXX")+'</tr>';
-  h += '<tr><td class="rev-lbl">Ge
+  h += '<tr><td class="rev-lbl">Gender</td><td>'+(genderEl?genderEl.value:"(not selected)")+'</td>'+sc(!!genderEl,"Please select")+'</tr>';
+  h += '<tr class="rev-section"><td colspan="3"><b>— Contact Information —</b></td></tr>';
+  h += '<tr><td class="rev-lbl">Phone</td><td>'+(phone||"(not provided)")+'</td>'+sc(phoneOk,"Must be 10 digits")+'</tr>';
+  h += '<tr><td class="rev-lbl">Email</td><td>'+(email||"(not entered)")+'</td>'+sc(emailOk,"Format: name@domain.tld")+'</tr>';
+  h += '<tr class="rev-section"><td colspan="3"><b>— Address —</b></td></tr>';
+  h += '<tr><td class="rev-lbl">Address</td><td>'+addrDisp+'</td>'+sc(addrOk,"Check address fields")+'</tr>';
+  h += '<tr class="rev-section"><td colspan="3"><b>— Medical History —</b></td></tr>';
+  var illH = "";
+  allIll.forEach(function(ill){ illH += ill+": <b>"+(checkedIll.indexOf(ill)!==-1?"Y":"N")+"</b>&nbsp;&nbsp;"; });
+  h += '<tr><td class="rev-lbl">Prior Illnesses</td><td colspan="2">'+illH+'</td></tr>';
+  h += '<tr><td class="rev-lbl">Vaccinated?</td><td>'+(vaccEl?vaccEl.value:"(not selected)")+'</td>'+sc(!!vaccEl,"Please select one")+'</tr>';
+  h += '<tr><td class="rev-lbl">Has Insurance?</td><td>'+(insEl?insEl.value:"(not selected)")+'</td>'+sc(!!insEl,"Please select one")+'</tr>';
+  h += '<tr><td class="rev-lbl">Pain Level</td><td>'+painDisp+'</td><td class="rev-pass">&#10003; PASS</td></tr>';
+  h += '<tr><td class="rev-lbl" style="vertical-align:top">Symptoms</td><td colspan="2">'+(symptoms||"(none)")+'</td></tr>';
+  h += '<tr class="rev-section"><td colspan="3"><b>— Account Credentials —</b></td></tr>';
+  h += '<tr><td class="rev-lbl">User ID</td><td>'+(userid||"(not entered)")+'</td>'+sc(uidOk,"5-20 chars, start with letter")+'</tr>';
+  h += '<tr><td class="rev-lbl">Password</td><td>'+(pw?pw.substring(0,3)+"***":"(not entered)")+' <i style="font-size:0.75rem;">(masked)</i></td>'+sc(pwOk,"Check password requirements")+'</tr>';
+  h += '<tr><td class="rev-lbl">Passwords Match?</td><td>'+(pw2Ok?"Yes":"No")+'</td>'+sc(pw2Ok,"Passwords do not match")+'</tr>';
+
+  document.getElementById("review-table").innerHTML = h;
+  document.getElementById("review-status").innerHTML = "";
+  var panel = document.getElementById("review-panel");
+  panel.style.display = "block";
+  panel.scrollIntoView({ behavior: "smooth" });
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────
+function submitForm() {
+  var rememberMe = document.getElementById("remember-me").checked;
+  if (rememberMe) {
+    var fname = document.getElementById("fname").value.trim();
+    if (fname) setCookie("ppm_firstname", fname, 48);
+  }
+  window.location.href = "thankyou.html";
+}
+
+// ── CLEAR ALL ────────────────────────────────────────────────
+function clearAll() {
+  document.getElementById("review-panel").style.display = "none";
+  document.getElementById("review-table").innerHTML = "";
+  document.getElementById("review-status").innerHTML = "";
+  document.getElementById("btn-submit").style.display = "none";
+  document.getElementById("pain-display").textContent = "0 — None";
+  document.getElementById("pain-display").style.color = "#27ae60";
+  document.getElementById("pw-strength").textContent = "";
+  document.querySelectorAll(".err").forEach(function(e){ e.textContent = "\u00a0"; });
+}
+
+// ── PAGE LOAD ────────────────────────────────────────────────
+window.onload = function() {
+  var dob   = document.getElementById("dob");
+  var today = new Date();
+  dob.setAttribute("max", today.toISOString().split("T")[0]);
+  var min = new Date();
+  min.setFullYear(min.getFullYear() - 120);
+  dob.setAttribute("min", min.toISOString().split("T")[0]);
+  updateSlider();
+  document.getElementById("btn-submit").style.display = "none";
+  loadStates();
+  checkCookie();
+};
+
+// END OF FILE: script.js
