@@ -2,13 +2,14 @@
   Program name: script.js
   Author: Viet Nguyen
   Date created: 04/01/2026
-  Date last edited: 04/01/2026
-  Version: 4.0
+  Date last edited: 05/08/2026
+  Version: 4.1
   Description: External javascript for Peak Point Medical HW4.
-               New things that are added are Fetch API loads state dropdown from
+               New things added: Fetch API loads state dropdown from
                states.html, cookies remembering returning users, and local
                storage saves and restores all non-secure form fields.
                All HW3 on the fly validation is still included.
+               Fixed phone validation to accept any 10 digit format.
 */
 
 // ── FETCH API ────────────────────────────────────────────────
@@ -16,19 +17,15 @@
 function loadStates() {
   fetch("states.html")
     .then(function(response) {
-      // if file not found throw an error
       if (!response.ok) throw new Error("Could not load states.html");
       return response.text();
     })
     .then(function(html) {
-      // put the loaded options into the dropdown
       document.getElementById("state").innerHTML = html;
-      // restore previously saved state if user is returning
       var saved = localStorage.getItem("ppm_state");
       if (saved) document.getElementById("state").value = saved;
     })
     .catch(function(err) {
-      // if fetch fails fall back to hardcoded list
       console.error("Fetch failed, using hardcoded states:", err);
       document.getElementById("state").innerHTML =
         '<option value="">-- Select --</option>' +
@@ -51,7 +48,6 @@ function loadStates() {
 
 // ── COOKIE FUNCTIONS ─────────────────────────────────────────
 
-// set a cookie - name, value, hours until it expires
 function setCookie(name, value, hours) {
   var expires = "";
   if (hours) {
@@ -62,7 +58,6 @@ function setCookie(name, value, hours) {
   document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
 }
 
-// get a cookie by name, returns null if not found
 function getCookie(name) {
   var nameEQ = name + "=";
   var ca = document.cookie.split(";");
@@ -73,18 +68,15 @@ function getCookie(name) {
   return null;
 }
 
-// delete a cookie by setting it to expire in the past
 function deleteCookie(name) {
   document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
 }
 
-// checks for a cookie and updates the welcome message in the banner
+// checks for cookie and shows welcome message in banner
 function checkCookie() {
   var firstName = getCookie("ppm_firstname");
   var welcomeEl = document.getElementById("welcome-msg");
-
   if (firstName) {
-    // returning user - show welcome back with not-me option
     welcomeEl.innerHTML =
       'Welcome back, <strong>' + firstName + '</strong>! &nbsp;' +
       '<label style="font-size:0.8rem; font-weight:normal; cursor:pointer;">' +
@@ -92,16 +84,14 @@ function checkCookie() {
       'Not ' + firstName + '? Click here to start as a new user.' +
       '</label>';
     welcomeEl.style.color = "#a8e6cf";
-    // load their saved data back into the form
     loadFromStorage();
   } else {
-    // first time here
     welcomeEl.textContent = "Welcome, New User!";
     welcomeEl.style.color = "#ffd3b6";
   }
 }
 
-// handles the not-me checkbox - clears everything and resets as new user
+// handles not me checkbox
 function handleNotMe() {
   var checked = document.getElementById("not-me").checked;
   if (checked) {
@@ -113,15 +103,13 @@ function handleNotMe() {
   }
 }
 
-// handles remember me checkbox - saves or clears depending on check state
+// handles remember me checkbox
 function handleRememberMe() {
   var rememberMe = document.getElementById("remember-me").checked;
   if (!rememberMe) {
-    // user unchecked - delete everything
     deleteCookie("ppm_firstname");
     clearLocalStorage();
   } else {
-    // user checked - save name cookie if name is filled in
     var fname = document.getElementById("fname").value.trim();
     if (fname) setCookie("ppm_firstname", fname, 48);
   }
@@ -129,27 +117,18 @@ function handleRememberMe() {
 
 // ── LOCAL STORAGE FUNCTIONS ───────────────────────────────────
 
-// saves a single field to local storage when user leaves it
 function saveToStorage(fieldId) {
-  // only save if remember me is checked
   var rememberMe = document.getElementById("remember-me").checked;
   if (!rememberMe) return;
-
-  // never save secure fields
   if (fieldId === "ssn" || fieldId === "password" || fieldId === "password2") return;
-
   var el = document.getElementById(fieldId);
   if (!el) return;
-
   localStorage.setItem("ppm_" + fieldId, el.value);
-
-  // also update the cookie if saving first name
   if (fieldId === "fname" && el.value.trim()) {
     setCookie("ppm_firstname", el.value.trim(), 48);
   }
 }
 
-// saves all illness checkboxes as a json array
 function saveCheckboxes() {
   var rememberMe = document.getElementById("remember-me").checked;
   if (!rememberMe) return;
@@ -158,9 +137,7 @@ function saveCheckboxes() {
   localStorage.setItem("ppm_illnesses", JSON.stringify(checked));
 }
 
-// loads all saved data back into the form fields
 function loadFromStorage() {
-  // restore simple text fields
   var fields = ["fname","mi","lname","dob","phone","email",
                 "addr1","addr2","city","zip","userid","symptoms","pain_scale"];
   fields.forEach(function(id) {
@@ -169,7 +146,6 @@ function loadFromStorage() {
     if (saved && el) el.value = saved;
   });
 
-  // restore gender radio button
   var savedGender = localStorage.getItem("ppm_gender");
   if (savedGender) {
     document.querySelectorAll('input[name="gender"]').forEach(function(r){
@@ -177,7 +153,6 @@ function loadFromStorage() {
     });
   }
 
-  // restore vaccinated radio button
   var savedVacc = localStorage.getItem("ppm_vaccinated");
   if (savedVacc) {
     document.querySelectorAll('input[name="vaccinated"]').forEach(function(r){
@@ -185,7 +160,6 @@ function loadFromStorage() {
     });
   }
 
-  // restore insurance radio button
   var savedIns = localStorage.getItem("ppm_insurance");
   if (savedIns) {
     document.querySelectorAll('input[name="insurance"]').forEach(function(r){
@@ -193,7 +167,6 @@ function loadFromStorage() {
     });
   }
 
-  // restore illness checkboxes from json array
   var savedIll = localStorage.getItem("ppm_illnesses");
   if (savedIll) {
     var illArr = JSON.parse(savedIll);
@@ -202,7 +175,6 @@ function loadFromStorage() {
     });
   }
 
-  // restore slider and update its display
   var savedPain = localStorage.getItem("ppm_pain_scale");
   if (savedPain) {
     document.getElementById("pain_scale").value = savedPain;
@@ -210,7 +182,6 @@ function loadFromStorage() {
   }
 }
 
-// clears all local storage keys for this app
 function clearLocalStorage() {
   var keys = ["fname","mi","lname","dob","phone","email",
               "addr1","addr2","city","state","zip","gender",
@@ -220,7 +191,6 @@ function clearLocalStorage() {
 }
 
 // ── SLIDER ───────────────────────────────────────────────────
-// updates label and color as user drags the slider
 function updateSlider() {
   var val    = parseInt(document.getElementById("pain_scale").value);
   var labels = ["0 — None","1 — Minimal","2 — Mild","3 — Uncomfortable",
@@ -234,7 +204,6 @@ function updateSlider() {
 }
 
 // ── SSN AUTO FORMAT ──────────────────────────────────────────
-// inserts dashes automatically as user types SSN
 function formatSSN() {
   var field = document.getElementById("ssn");
   var val   = field.value.replace(/\D/g, "");
@@ -273,7 +242,6 @@ function checkPasswordStrength() {
 }
 
 // ── CHECK SUBMIT BUTTON ───────────────────────────────────────
-// hides or shows submit button based on whether any errors exist
 function checkSubmitButton() {
   var hasErrors = false;
   document.querySelectorAll(".err").forEach(function(e) {
@@ -285,7 +253,6 @@ function checkSubmitButton() {
 }
 
 // ── INDIVIDUAL FIELD VALIDATORS ──────────────────────────────
-// each one runs oninput and onblur for its field
 
 function validateFname() {
   var val = document.getElementById("fname").value.trim();
@@ -337,16 +304,17 @@ function validateSSN() {
   checkSubmitButton();
 }
 
+// fixed phone validation - accepts any 10 digit number regardless of formatting
 function validatePhone() {
-  var val = document.getElementById("phone").value.trim();
-  var err = document.getElementById("err-phone");
-  if (val && !/^\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{4}$/.test(val)) err.textContent = "Format: 000-000-0000";
+  var val    = document.getElementById("phone").value.trim();
+  var err    = document.getElementById("err-phone");
+  var digits = val.replace(/\D/g, "");
+  if (val && digits.length !== 10) err.textContent = "Must be 10 digits. Example: 214-843-6669";
   else err.textContent = "\u00a0";
   checkSubmitButton();
 }
 
 function validateEmail() {
-  // force lowercase on email
   var field = document.getElementById("email");
   field.value = field.value.toLowerCase();
   var val = field.value.trim();
@@ -481,7 +449,6 @@ function checkPasswordMatch() {
 }
 
 // ── VALIDATE ALL ─────────────────────────────────────────────
-// runs all field validators at once when validate button is clicked
 function validateAll() {
   validateFname(); validateMI(); validateLname();
   validateDOB(); validateSSN(); validatePhone(); validateEmail();
@@ -491,7 +458,6 @@ function validateAll() {
   validateUserID(); validatePassword(); checkPasswordMatch();
   checkSubmitButton();
 
-  // scroll to first error if any
   var firstErr = null;
   document.querySelectorAll(".err").forEach(function(e) {
     if (!firstErr && e.textContent && e.textContent.trim() !== "" && e.textContent !== "\u00a0") {
@@ -548,7 +514,9 @@ function reviewForm() {
   }
   var ssnOk   = /^\d{3}-\d{2}-\d{4}$/.test(ssn);
   var ssnDisp = ssn ? "***-**-" + ssn.replace(/\D/g,"").slice(-4) : "(not entered)";
-  var phoneOk = !phone || /^\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{4}$/.test(phone);
+  // fixed phone check - just count digits
+  var phoneDigits = phone.replace(/\D/g,"");
+  var phoneOk = !phone || phoneDigits.length === 10;
   var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   var addrOk  = addr1.length>=2 && city.length>=2 && state!=="" && /^\d{5}$/.test(zip);
   var addrDisp= (addr1||"(missing)")+(addr2?", "+addr2:"")+"<br>"+(city||"(missing)")+", "+(state||"(missing)")+" "+(zip||"(missing)");
@@ -564,77 +532,4 @@ function reviewForm() {
   h += '<tr><td class="rev-lbl">Full Name</td><td>'+(fullName.trim()||"(blank)")+'</td>'+sc(nameOk&&!!fname&&!!lname,"Check name fields")+'</tr>';
   h += '<tr><td class="rev-lbl">Date of Birth</td><td>'+(dob||"(not entered)")+'</td>'+sc(dobOk,dobErr)+'</tr>';
   h += '<tr><td class="rev-lbl">Social Security</td><td>'+ssnDisp+'</td>'+sc(ssnOk,"Format: XXX-XX-XXXX")+'</tr>';
-  h += '<tr><td class="rev-lbl">Gender</td><td>'+(genderEl?genderEl.value:"(not selected)")+'</td>'+sc(!!genderEl,"Please select")+'</tr>';
-  h += '<tr class="rev-section"><td colspan="3"><b>— Contact Information —</b></td></tr>';
-  h += '<tr><td class="rev-lbl">Phone</td><td>'+(phone||"(not provided)")+'</td>'+sc(phoneOk,"Format: 000-000-0000")+'</tr>';
-  h += '<tr><td class="rev-lbl">Email</td><td>'+(email||"(not entered)")+'</td>'+sc(emailOk,"Format: name@domain.tld")+'</tr>';
-  h += '<tr class="rev-section"><td colspan="3"><b>— Address —</b></td></tr>';
-  h += '<tr><td class="rev-lbl">Address</td><td>'+addrDisp+'</td>'+sc(addrOk,"Check address fields")+'</tr>';
-  h += '<tr class="rev-section"><td colspan="3"><b>— Medical History —</b></td></tr>';
-  var illH = "";
-  allIll.forEach(function(ill){ illH += ill+": <b>"+(checkedIll.indexOf(ill)!==-1?"Y":"N")+"</b>&nbsp;&nbsp;"; });
-  h += '<tr><td class="rev-lbl">Prior Illnesses</td><td colspan="2">'+illH+'</td></tr>';
-  h += '<tr><td class="rev-lbl">Vaccinated?</td><td>'+(vaccEl?vaccEl.value:"(not selected)")+'</td>'+sc(!!vaccEl,"Please select one")+'</tr>';
-  h += '<tr><td class="rev-lbl">Has Insurance?</td><td>'+(insEl?insEl.value:"(not selected)")+'</td>'+sc(!!insEl,"Please select one")+'</tr>';
-  h += '<tr><td class="rev-lbl">Pain Level</td><td>'+painDisp+'</td><td class="rev-pass">&#10003; PASS</td></tr>';
-  h += '<tr><td class="rev-lbl" style="vertical-align:top">Symptoms</td><td colspan="2">'+(symptoms||"(none)")+'</td></tr>';
-  h += '<tr class="rev-section"><td colspan="3"><b>— Account Credentials —</b></td></tr>';
-  h += '<tr><td class="rev-lbl">User ID</td><td>'+(userid||"(not entered)")+'</td>'+sc(uidOk,"5-20 chars, start with letter")+'</tr>';
-  h += '<tr><td class="rev-lbl">Password</td><td>'+(pw?pw.substring(0,3)+"***":"(not entered)")+' <i style="font-size:0.75rem;">(masked)</i></td>'+sc(pwOk,"Check password requirements")+'</tr>';
-  h += '<tr><td class="rev-lbl">Passwords Match?</td><td>'+(pw2Ok?"Yes":"No")+'</td>'+sc(pw2Ok,"Passwords do not match")+'</tr>';
-
-  document.getElementById("review-table").innerHTML = h;
-  document.getElementById("review-status").innerHTML = "";
-  var panel = document.getElementById("review-panel");
-  panel.style.display = "block";
-  panel.scrollIntoView({ behavior: "smooth" });
-}
-
-// ── SUBMIT ───────────────────────────────────────────────────
-function submitForm() {
-  // save cookie on submit if remember me is checked
-  var rememberMe = document.getElementById("remember-me").checked;
-  if (rememberMe) {
-    var fname = document.getElementById("fname").value.trim();
-    if (fname) setCookie("ppm_firstname", fname, 48);
-  }
-  window.location.href = "thankyou.html";
-}
-
-// ── CLEAR ALL ────────────────────────────────────────────────
-function clearAll() {
-  document.getElementById("review-panel").style.display = "none";
-  document.getElementById("review-table").innerHTML = "";
-  document.getElementById("review-status").innerHTML = "";
-  document.getElementById("btn-submit").style.display = "none";
-  document.getElementById("pain-display").textContent = "0 — None";
-  document.getElementById("pain-display").style.color = "#27ae60";
-  document.getElementById("pw-strength").textContent = "";
-  // reset all error spans back to non-breaking space
-  document.querySelectorAll(".err").forEach(function(e){ e.textContent = "\u00a0"; });
-}
-
-// ── PAGE LOAD ────────────────────────────────────────────────
-window.onload = function() {
-  // set date of birth min and max limits
-  var dob   = document.getElementById("dob");
-  var today = new Date();
-  dob.setAttribute("max", today.toISOString().split("T")[0]);
-  var min = new Date();
-  min.setFullYear(min.getFullYear() - 120);
-  dob.setAttribute("min", min.toISOString().split("T")[0]);
-
-  // initialize the pain slider display
-  updateSlider();
-
-  // hide submit button until all fields pass
-  document.getElementById("btn-submit").style.display = "none";
-
-  // load state dropdown from states.html using Fetch API
-  loadStates();
-
-  // check for cookie and show welcome message
-  checkCookie();
-};
-
-// END OF FILE: script.js
+  h += '<tr><td class="rev-lbl">Ge
