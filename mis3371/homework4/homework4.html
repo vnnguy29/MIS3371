@@ -2,12 +2,12 @@
 Program name: homework4.html
 Author: Viet Nguyen
 Date created: 04/01/2026
-Date last edited: 04/01/2026
-Version: 4.0
+Date last edited: 05/08/2026
+Version: 4.1
 Description: Patient registration form for Peak Point Medical.
-             HW4 added Fetch API to have the state dropdown from an
+             HW4 added Fetch API to load the state dropdown from an
              external file, an iFrame in the body, a fixed header
-             and footer, cookies to remember returning users, and a
+             and footer, cookies remembering returning users, and
              local storage to save and restore form data.
 -->
 <!DOCTYPE html>
@@ -236,7 +236,7 @@ Description: Patient registration form for Peak Point Medical.
           </td>
         </tr>
 
-        <!-- remember me checkbox - controls cookie and local storage -->
+        <!-- remember me checkbox -->
         <tr>
           <td class="lbl">Remember Me:</td>
           <td colspan="5">
@@ -291,7 +291,7 @@ Description: Patient registration form for Peak Point Medical.
           </td>
         </tr>
 
-        <!-- pain slider - updates dynamically as user drags -->
+        <!-- pain slider -->
         <tr>
           <td class="lbl">Rate your pain level:</td>
           <td colspan="5">
@@ -329,13 +329,13 @@ Description: Patient registration form for Peak Point Medical.
       <p style="margin-bottom:10px; font-size:0.9rem; color:#555;">
         Browse health tips while completing your registration:
       </p>
-      <!-- iFrame requirement - shows CDC health features page -->
+      <!-- iFrame requirement - shows CDC homepage -->
       <iframe
         id="health-iframe"
-        src="https://www.cdc.gov/features/index.html"
+        src="https://www.cdc.gov"
         width="100%"
         height="300"
-        title="CDC Health Features - click links inside to browse"
+        title="CDC Health Homepage - click links inside to browse"
         style="border:1px solid #b0c8d4; border-radius:4px;">
         Your browser does not support iFrames.
       </iframe>
@@ -346,7 +346,7 @@ Description: Patient registration form for Peak Point Medical.
     <div class="form-section">
       <table class="form-table">
 
-        <!-- user id - auto converts to lowercase -->
+        <!-- user id -->
         <tr>
           <td class="lbl">User ID: <span class="req">*</span></td>
           <td colspan="5">
@@ -396,7 +396,7 @@ Description: Patient registration form for Peak Point Medical.
       </table>
     </div>
 
-    <!-- clear, review, validate, submit buttons -->
+    <!-- buttons -->
     <div id="form-buttons">
       <input type="reset"  id="btn-clear"    value="Clear Form"  onclick="clearAll();">
       <input type="button" id="btn-review"   value="Review"      onclick="reviewForm();">
